@@ -39,3 +39,22 @@ type LockedIndexedMap struct {
 	mu *sync.Mutex
 	*IndexedMap
 }
+
+func NewLockedIndexedMap() *LockedIndexedMap {
+	return &LockedIndexedMap{
+		mu:         &sync.Mutex{},
+		IndexedMap: NewIndexedMap(),
+	}
+}
+
+func (m *LockedIndexedMap) Add(key, value string) {
+	m.mu.Lock()
+	m.IndexedMap.Add(key, value)
+	m.mu.Unlock()
+}
+
+func (m *LockedIndexedMap) Get(key string) []string {
+	m.mu.Lock()
+	defer m.mu.Unlock()
+	return m.IndexedMap.Get(key)
+}
