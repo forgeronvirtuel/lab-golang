@@ -11,4 +11,8 @@ func main() {
 	imap := indexedmap.NewIndexedMap()
 	imap.Add("key", "value")
 	logger.Println("Content of `key`:", imap.Get("key"))
+
+	lockedImap := indexedmap.NewLockedIndexedMap()
+	lockedImap.Add("key", "value")
+	logger.Println("Content of `key`:", lockedImap.Get("key"))
 }
