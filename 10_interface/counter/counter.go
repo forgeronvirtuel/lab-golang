@@ -11,3 +11,10 @@ type ConcreteCounter struct {
 func (c *ConcreteCounter) Increment() {
 	c.counter++
 }
+
+func doStuffAndIncrement(cnt Counter) {
+	// do very important stuff
+	if cnt != nil {
+		cnt.Increment()
+	}
+}
