@@ -4,8 +4,21 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc8d24d8-cde1-460c-afdf-6f06786e856b" name="Changes" comment="">
+    <list default="true" id="e7d0ce36-92fd-4b28-abeb-7d66f569a1be" name="Changes" comment="feat: error example">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_webserver_rest/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_webserver_rest/.idea/01_webserver_rest.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_webserver_rest/.idea/modules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/01_webserver_rest/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/09_encapsulation/indexedmap/indexed_map.go" beforeDir="false" afterPath="$PROJECT_DIR$/09_encapsulation/indexedmap/indexed_map.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_interface/counter/counter.go" beforeDir="false" afterPath="$PROJECT_DIR$/10_interface/counter/counter.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_interface/counter/counter_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/10_interface/counter/counter_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_interface/error_example/web_errors_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/10_interface/error_example/web_errors_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/10_interface_as_contract/main.go" beforeDir="false" afterPath="$PROJECT_DIR$/10_interface/main.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ch5/ex_5_19/main.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ch5/fetch/fetch.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ch5/fetch/index.html" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -26,57 +39,173 @@
   <component name="GoLibraries">
     <option name="indexEntireGoPath" value="false" />
   </component>
+  <component name="JsbtTreeLayoutManager">
+    <layout place="tools.popupGrunt">
+      <scroll-view-position x="0" y="0" />
+    </layout>
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProjectId" id="2EFclmi5qSPXBKVPJhRuE0yx1hw" />
+  <component name="ProjectId" id="2EWcUrHiADzd0qZP42jhtqHBgxC" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="DefaultGoTemplateProperty" value="Go File" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="go.format.on.save.advertiser.fired" value="true" />
-    <property name="go.formatter.settings.were.checked" value="true" />
-    <property name="go.import.settings.migrated" value="true" />
-    <property name="go.modules.go.list.on.any.changes.was.set" value="true" />
-    <property name="go.sdk.automatically.set" value="true" />
-    <property name="go.watchers.conflict.with.on.save.actions.check.performed" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
-    <property name="node.js.detected.package.eslint" value="true" />
-    <property name="node.js.detected.package.tslint" value="true" />
-    <property name="node.js.selected.package.eslint" value="(autodetect)" />
-    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultGoTemplateProperty": "Go File",
+    "RunOnceActivity.go.format.on.save.advertiser.fired": "true",
+    "RunOnceActivity.go.formatter.settings.were.checked": "true",
+    "RunOnceActivity.go.migrated.go.modules.settings": "true",
+    "RunOnceActivity.go.modules.go.list.on.any.changes.was.set": "true",
+    "RunOnceActivity.go.watchers.conflict.with.on.save.actions.check.performed": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "go.import.settings.migrated": "true",
+    "last_opened_file_path": "/home/v/lab-github/lab-golang",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/04_duplicate_counter" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/10_interface/counter" />
+    </key>
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="GoApplicationRunConfiguration" factoryName="Go Application">
+  <component name="RunManager" selected="Go Test.TestPointers in github.com/forgeronvirtuel/labgolang/12_basics">
+    <configuration name="copy command" type="GoApplicationRunConfiguration" factoryName="Go Application">
       <module name="lab-golang" />
       <working_directory value="$PROJECT_DIR$" />
-      <go_parameters value="-i" />
+      <parameters value="generation" />
       <kind value="FILE" />
       <directory value="$PROJECT_DIR$" />
-      <filePath value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/05_copy_paste_files/copy_paste.go" />
+      <output_directory value="$PROJECT_DIR$/05_copy_paste_files/" />
       <method v="2" />
     </configuration>
-    <configuration default="true" type="GoTestRunConfiguration" factoryName="Go Test">
+    <configuration name="generation comand" type="GoApplicationRunConfiguration" factoryName="Go Application">
+      <module name="lab-golang" />
+      <working_directory value="$PROJECT_DIR$/05_copy_paste_files" />
+      <parameters value="generation 1000 ./generated" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/05_copy_paste_files/copy_paste.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build copy_paste.go" type="GoApplicationRunConfiguration" factoryName="Go Application" nameIsGenerated="true">
+      <module name="lab-golang" />
+      <working_directory value="$PROJECT_DIR$/05_copy_paste_files/" />
+      <parameters value="copy-folder ./generated ./backup" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/05_copy_paste_files/copy_paste.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="go build variable_declaration.go" type="GoApplicationRunConfiguration" factoryName="Go Application" temporary="true" nameIsGenerated="true">
       <module name="lab-golang" />
       <working_directory value="$PROJECT_DIR$" />
-      <go_parameters value="-i" />
-      <kind value="DIRECTORY" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/12_basics/variable_declaration.go" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestConvertCounter in counter" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="lab-golang" />
+      <working_directory value="$PROJECT_DIR$/10_interface/counter" />
+      <kind value="PACKAGE" />
+      <package value="counter" />
       <directory value="$PROJECT_DIR$" />
       <filePath value="$PROJECT_DIR$" />
       <framework value="gotest" />
+      <pattern value="^\QTestConvertCounter\E$" />
       <method v="2" />
     </configuration>
+    <configuration name="TestNewNotFoundError in web_errors_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="lab-golang" />
+      <working_directory value="$PROJECT_DIR$/10_interface/error_example" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/10_interface/error_example/web_errors_test.go" />
+      <framework value="gotest" />
+      <pattern value="^\QTestNewNotFoundError\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="TestPointers in github.com/forgeronvirtuel/labgolang/12_basics" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="lab-golang" />
+      <working_directory value="$PROJECT_DIR$/12_basics" />
+      <root_directory value="$PROJECT_DIR$" />
+      <kind value="PACKAGE" />
+      <package value="github.com/forgeronvirtuel/labgolang/12_basics" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$" />
+      <framework value="gotest" />
+      <pattern value="^\QTestPointers\E$" />
+      <method v="2" />
+    </configuration>
+    <configuration name="gobench variable_declaration_test.go" type="GoTestRunConfiguration" factoryName="Go Test" temporary="true" nameIsGenerated="true">
+      <module name="lab-golang" />
+      <working_directory value="$PROJECT_DIR$/12_basics" />
+      <kind value="FILE" />
+      <directory value="$PROJECT_DIR$" />
+      <filePath value="$PROJECT_DIR$/12_basics/variable_declaration_test.go" />
+      <framework value="gobench" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Go Build.go build copy_paste.go" />
+      <item itemvalue="Go Build.generation comand" />
+      <item itemvalue="Go Build.copy command" />
+      <item itemvalue="Go Build.go build variable_declaration.go" />
+      <item itemvalue="Go Test.TestPointers in github.com/forgeronvirtuel/labgolang/12_basics" />
+      <item itemvalue="Go Test.gobench variable_declaration_test.go" />
+      <item itemvalue="Go Test.TestConvertCounter in counter" />
+      <item itemvalue="Go Test.TestNewNotFoundError in web_errors_test.go" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Go Test.TestPointers in github.com/forgeronvirtuel/labgolang/12_basics" />
+        <item itemvalue="Go Test.gobench variable_declaration_test.go" />
+        <item itemvalue="Go Build.go build variable_declaration.go" />
+        <item itemvalue="Go Test.TestConvertCounter in counter" />
+        <item itemvalue="Go Test.TestNewNotFoundError in web_errors_test.go" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="feat: adding the example to not use defer f.Close() into a loop" />
+    <MESSAGE value="feat: example of using nil value to call method" />
+    <MESSAGE value="feat: counter example" />
+    <MESSAGE value="feat: panic and recover example" />
+    <MESSAGE value="post: embedding structure" />
+    <MESSAGE value="post: interface as contract" />
+    <MESSAGE value="post: encapsulation for protecting threadsafe method" />
+    <MESSAGE value="feat: freelance func &amp; switch" />
+    <MESSAGE value="feat: benchmarking interface performance" />
+    <MESSAGE value="feat: caveat with nil and implicit conversion." />
+    <MESSAGE value="feat: error example" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: error example" />
+  </component>
   <component name="VgoProject">
-    <integration-enabled>true</integration-enabled>
+    <settings-migrated>true</settings-migrated>
   </component>
 </project>

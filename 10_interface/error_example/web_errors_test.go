@@ -24,3 +24,10 @@ func TestNewNotFoundError(t *testing.T) {
 	jsonified, _ := json.Marshal(err)
 	fmt.Println(string(jsonified))
 }
+
+func TestErrorTypeAssertion(t *testing.T) {
+	err := DoStuff("/not-found")
+	if notFoundErrror, ok := err.(*NotFoundError); ok {
+		fmt.Println("NotFoundError:", notFoundErrror)
+	}
+}

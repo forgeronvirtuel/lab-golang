@@ -24,7 +24,7 @@ func (m *IndexedMap) Add(key, value string) {
 	m.values = append(m.values, value)
 }
 
-// Get get the associated values for the given key
+// Get retrieves the associated values for the given key
 func (m *IndexedMap) Get(key string) []string {
 	var values []string
 	for idx, k := range m.keys {
