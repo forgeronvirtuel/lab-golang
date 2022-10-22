@@ -41,25 +41,60 @@ func Compute(input []int, limit int) []int {
 	return res
 }
 
-func main() {
-	data := []int{
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-		1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+func ComputeWithLimit(input []int, limit int) []int {
+	res := make([]int, len(input))
+	resultsch := make(chan int, limit)
+	inputch := make(chan int)
+
+	// Inject all inputs
+	go func() {
+		for _, v := range input {
+			inputch <- v
+		}
+		close(inputch)
+	}()
+
+	// Launch computations
+	for i := 0; i < limit; i++ {
+		go func(inpch <-chan int, outch chan<- int) {
+			for n := range inpch {
+				outch <- fibonacci(n)
+			}
+		}(inputch, resultsch)
 	}
 
-	for i := 1; i <= 1000; i++ {
+	// Reading results
+	for i := 0; i < len(input); i++ {
+		res[i] = <-resultsch
+	}
+
+	return res
+}
+
+func main() {
+	const startAt = 1
+	const nbThread = 40
+	const nbData = 10000
+	var computeFunc = ComputeWithLimit
+
+	data := make([]int, nbData)
+	for i := 0; i < nbData; i++ {
+		data[i] = 20
+	}
+
+	totTime := time.Duration(0)
+	for i := startAt; i <= nbThread; i++ {
 		var times []time.Duration
-		for j := 0; j < 10; j++ {
+		for j := 0; j < 5; j++ {
 			start := time.Now()
-			Compute(data, i)
+			computeFunc(data, i)
+			totTime += time.Since(start)
 			times = append(times, time.Since(start))
 		}
 		sort.Slice(times, func(i, j int) bool {
 			return times[i].Microseconds() < times[j].Microseconds()
 		})
-		fmt.Printf("#%.02d, tmin = %s, tavg = %s, tmax = %s\n", i, times[0], times[len(times)/2], times[len(times)-1])
+		avg := (times[0] + times[1]) / 2
+		fmt.Printf("#%.02d, avg = %s, tmin = %s, tavg = %s, tmax = %s\n", i, avg, times[0], times[len(times)/2], times[len(times)-1])
 	}
 }
