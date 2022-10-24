@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"runtime"
 	"time"
 )
 
@@ -14,8 +15,12 @@ func fibonacci(n int) int {
 }
 
 func main() {
-	const inp = 50
-	const timeout = 1 * time.Second
+	const inp = 10
+	const timeout = 10 * time.Second
+
+	var m runtime.MemStats
+
+	timeoutch := make(chan bool)
 
 	ch := make(chan int)
 
@@ -23,11 +28,24 @@ func main() {
 		ch <- fibonacci(inp)
 	}()
 
-	time.Sleep(timeout)
-	select {
-	case result := <-ch:
-		fmt.Printf("fibonacci(%d) = %d", inp, result)
-	default:
-		fmt.Println("timeout reach !")
+	go func() {
+		time.Sleep(timeout)
+		timeoutch <- true
+	}()
+
+	stop := false
+	for !stop {
+		time.Sleep(300 * time.Millisecond)
+		select {
+		case result := <-ch:
+			fmt.Printf("fibonacci(%d) = %d", inp, result)
+			stop = true
+		case <-timeoutch:
+			fmt.Println("timeout reach !")
+			stop = true
+		default:
+			runtime.ReadMemStats(&m)
+			fmt.Printf("TotalAlloc: %d Bytes\n", m.TotalAlloc)
+		}
 	}
 }
