@@ -10,29 +10,36 @@ import (
 
 func main() {
 	worklist := make(chan []string)
+	tokens := make(chan struct{}, 20)
+	var n int
 
 	// Start with the command-line arguments.
+	n++
 	go func() { worklist <- os.Args[1:] }()
 
 	// Crawl the web concurrently
 	seen := make(map[string]bool)
-	for list := range worklist {
+	for ; n > 0; n-- {
+		list := <-worklist
 		for _, link := range list {
 			if !seen[link] {
 				seen[link] = true
+				n++
 				go func(url string) {
-					worklist <- crawl(url)
+					worklist <- crawl(url, tokens)
 				}(link)
 			}
 		}
 	}
 }
 
-func crawl(url string) []string {
+func crawl(url string, tokens chan struct{}) []string {
 	fmt.Println(url)
+	tokens <- struct{}{}
 	list, err := extract(url)
+	<-tokens
+	log.Print(err)
 	if err != nil {
-		log.Print(err)
 	}
 	return list
 }
