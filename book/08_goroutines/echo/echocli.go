@@ -9,12 +9,18 @@ import (
 
 func main() {
 	conn, err := net.Dial("tcp", "localhost:8000")
+	done := make(chan bool)
+	go func() {
+		io.Copy(os.Stdout, conn)
+		done <- true
+	}()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer conn.Close()
-	go mustCopy(os.Stdout, conn)
 	mustCopy(conn, os.Stdin)
+	for ok := <-done; !ok; {
+	}
 }
 
 func mustCopy(dst io.Writer, src io.Reader) {
