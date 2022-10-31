@@ -5,11 +5,23 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"time"
 )
 
+var verbose = flag.Bool("v", false, "show verbose progress messages")
+
 func main() {
-	// Determines the initial directory
+
 	flag.Parse()
+
+	// Print the results periodically
+	var tick <-chan time.Time
+	fmt.Println(verbose, *verbose)
+	if *verbose {
+		tick = time.Tick(500 * time.Millisecond)
+	}
+
+	// Determines the initial directory
 	roots := flag.Args()
 	if len(roots) == 0 {
 		roots = []string{"."}
@@ -24,12 +36,24 @@ func main() {
 		close(filesizes)
 	}()
 
-	// Prints the results
 	var nfiles, nbytes int64
-	for size := range filesizes {
-		nfiles++
-		nbytes += size
+loop:
+	for {
+		select {
+		case size, ok := <-filesizes:
+			if !ok {
+				break loop
+			}
+			nfiles++
+			nbytes += size
+		case <-tick:
+			printDiskUsage(nfiles, nbytes)
+		}
 	}
+	printDiskUsage(nfiles, nbytes)
+}
+
+func printDiskUsage(nfiles int64, nbytes int64) {
 	fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
 }
 
