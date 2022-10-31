@@ -16,7 +16,6 @@ func main() {
 
 	// Print the results periodically
 	var tick <-chan time.Time
-	fmt.Println(verbose, *verbose)
 	if *verbose {
 		tick = time.Tick(500 * time.Millisecond)
 	}
@@ -37,12 +36,14 @@ func main() {
 	}()
 
 	var nfiles, nbytes int64
-loop:
-	for {
+	var stop bool
+
+	for !stop {
 		select {
 		case size, ok := <-filesizes:
 			if !ok {
-				break loop
+				stop = true
+				break
 			}
 			nfiles++
 			nbytes += size
