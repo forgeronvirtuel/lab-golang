@@ -16,6 +16,8 @@ func main() {
 				// (4) Now this goroutine wakes up, but
 				// the condition is no more valid.
 				ch <- i
+			} else {
+				i--
 			}
 		}
 	}()
