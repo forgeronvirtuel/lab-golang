@@ -6,13 +6,17 @@ import (
 )
 
 func main() {
-	go spinner(100 * time.Millisecond)
+	done := make(chan bool, 1)
+	go spinner(100*time.Millisecond, done)
 	const n = 45
-	fmt.Printf("\rFibonacci(%d) = %d\n", n, fib(n))
+	res := fibonacci(n)
+	done <- true
+	fmt.Printf("\rHeavy(%d) = %d\n", n, res)
 }
 
-func spinner(delay time.Duration) {
+func spinner(delay time.Duration, ch chan bool) {
 	for {
+		fmt.Println(len(ch))
 		for _, r := range `|/-\` {
 			fmt.Printf("\r%c", r)
 			time.Sleep(delay)
@@ -20,9 +24,9 @@ func spinner(delay time.Duration) {
 	}
 }
 
-func fib(n int) int {
+func fibonacci(n int) int {
 	if n < 2 {
 		return n
 	}
-	return fib(n-1) + fib(n-2)
+	return fibonacci(n-1) + fibonacci(n-2)
 }
