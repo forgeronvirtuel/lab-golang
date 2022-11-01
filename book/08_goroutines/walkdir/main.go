@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sync"
 	"time"
 )
 
@@ -28,10 +29,14 @@ func main() {
 
 	// Traverse the file tree
 	filesizes := make(chan int64)
+	var n sync.WaitGroup
+	for _, root := range roots {
+		n.Add(1)
+		go walkdir(root, &n, filesizes)
+	}
+
 	go func() {
-		for _, root := range roots {
-			walkdir(root, filesizes)
-		}
+		n.Wait()
 		close(filesizes)
 	}()
 
@@ -58,11 +63,13 @@ func printDiskUsage(nfiles int64, nbytes int64) {
 	fmt.Printf("%d files %.1f GB\n", nfiles, float64(nbytes)/1e9)
 }
 
-func walkdir(dir string, filesizes chan<- int64) {
+func walkdir(dir string, n *sync.WaitGroup, filesizes chan<- int64) {
+	defer n.Done()
 	for _, entry := range dirents(dir) {
 		if entry.IsDir() {
+			n.Add(1)
 			subdir := filepath.Join(dir, entry.Name())
-			walkdir(subdir, filesizes)
+			go walkdir(subdir, n, filesizes)
 		} else {
 			info, err := entry.Info()
 			if err != nil {
@@ -74,7 +81,11 @@ func walkdir(dir string, filesizes chan<- int64) {
 	}
 }
 
+var sema = make(chan struct{}, 20)
+
 func dirents(dir string) []os.DirEntry {
+	sema <- struct{}{}
+	defer func() { <-sema }()
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "du: %v\n", err)
