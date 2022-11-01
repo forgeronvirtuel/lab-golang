@@ -9,6 +9,17 @@ import (
 	"time"
 )
 
+var done = make(chan struct{})
+
+func cancelled() bool {
+	select {
+	case <-done:
+		return true
+	default:
+		return false
+	}
+}
+
 var verbose = flag.Bool("v", false, "show verbose progress messages")
 
 func main() {
@@ -40,11 +51,22 @@ func main() {
 		close(filesizes)
 	}()
 
+	// Monitoring input to cancel
+	go func() {
+		os.Stdin.Read(make([]byte, 1))
+		close(done)
+	}()
+
 	var nfiles, nbytes int64
 	var stop bool
 
 	for !stop {
 		select {
+		case <-done:
+			// Drain filesize to allow existing goroutine  to finish
+			for range filesizes {
+				// Do nothing
+			}
 		case size, ok := <-filesizes:
 			if !ok {
 				stop = true
@@ -65,6 +87,9 @@ func printDiskUsage(nfiles int64, nbytes int64) {
 
 func walkdir(dir string, n *sync.WaitGroup, filesizes chan<- int64) {
 	defer n.Done()
+	if cancelled() {
+		return
+	}
 	for _, entry := range dirents(dir) {
 		if entry.IsDir() {
 			n.Add(1)
@@ -84,7 +109,11 @@ func walkdir(dir string, n *sync.WaitGroup, filesizes chan<- int64) {
 var sema = make(chan struct{}, 20)
 
 func dirents(dir string) []os.DirEntry {
-	sema <- struct{}{}
+	select {
+	case sema <- struct{}{}:
+	case <-done:
+		return nil
+	}
 	defer func() { <-sema }()
 	entries, err := os.ReadDir(dir)
 	if err != nil {
