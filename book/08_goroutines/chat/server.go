@@ -1,17 +1,18 @@
 package main
 
 import (
-	"io"
+	"bufio"
+	"fmt"
 	"log"
 	"net"
-	"time"
 )
 
 func main() {
 	listener, err := net.Listen("tcp", "localhost:8000")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
+	go broadcaster()
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
@@ -22,17 +23,55 @@ func main() {
 	}
 }
 
-func handleConn(conn net.Conn) {
-	defer func() {
-		if err := conn.Close(); err != nil {
-			log.Print(err)
-		}
-	}()
+type client chan<- string // an outgoing message channel
+var (
+	entering = make(chan client)
+	leaving  = make(chan client)
+	messages = make(chan string)
+)
+
+func broadcaster() {
+	// All connected clients
+	clients := make(map[client]bool)
 	for {
-		_, err := io.WriteString(conn, time.Now().Format("15:04:05\n"))
-		if err != nil {
-			return
+		select {
+		case msg := <-messages:
+			// Broadcast incoming message to all clients'
+			// outgoing message channels.
+			for cli := range clients {
+				cli <- msg
+			}
+		case cli := <-entering:
+			clients[cli] = true
+		case cli := <-leaving:
+			delete(clients, cli)
+			close(cli)
 		}
-		time.Sleep(1 * time.Second)
+	}
+}
+
+func handleConn(conn net.Conn) {
+	// Outgoing client messages
+	ch := make(chan string)
+	go clientWriter(conn, ch)
+
+	who := conn.RemoteAddr().String()
+	ch <- "You are " + who
+	messages <- who + " has arrived"
+	entering <- ch
+
+	input := bufio.NewScanner(conn)
+	for input.Scan() {
+		messages <- who + " : " + input.Text()
+	}
+
+	leaving <- ch
+	messages <- who + " has left"
+	conn.Close()
+}
+
+func clientWriter(conn net.Conn, ch <-chan string) {
+	for msg := range ch {
+		fmt.Println(conn, msg)
 	}
 }
