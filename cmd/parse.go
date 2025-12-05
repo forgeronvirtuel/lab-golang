@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"time"
 
 	"github.com/forgeronvirtuel/lab-golang/internal/largedataset"
 	"github.com/spf13/cobra"
@@ -30,7 +31,13 @@ You can specify a custom separator and show the first N rows for debugging.`,
 			log.Fatal("separator must be a single character")
 		}
 
-		processCSV(filePath, rune(separator[0]), hasHeader, showFirst)
+		start := time.Now()
+		err := processCSV(filePath, rune(separator[0]), hasHeader, showFirst)
+		if err != nil {
+			log.Fatalf("Error processing CSV: %v", err)
+		}
+		elapsed := time.Since(start)
+		fmt.Printf("\nProcessing took %s\n", elapsed)
 	},
 }
 
@@ -62,6 +69,7 @@ func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
 		totalRows   int
 		validRows   int
 		invalidRows int
+		stats       = largedataset.NewAmountStats()
 	)
 
 	// Optionally read and ignore the header row
@@ -98,6 +106,7 @@ func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
 		}
 
 		validRows++
+		stats.Add(logical)
 
 		// Optionally show first N valid logical rows
 		if showFirst > 0 && validRows <= showFirst {
@@ -111,6 +120,17 @@ func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
 	fmt.Printf("Total rows read:    %d\n", totalRows)
 	fmt.Printf("Valid logical rows: %d\n", validRows)
 	fmt.Printf("Invalid rows:       %d\n", invalidRows)
+
+	if stats.HasData() {
+		fmt.Printf("\n=== Amount stats (global) ===\n")
+		fmt.Printf("Count:   %d\n", stats.Count)
+		fmt.Printf("Sum:     %.2f\n", stats.Sum)
+		fmt.Printf("Min:     %.2f\n", stats.Min)
+		fmt.Printf("Max:     %.2f\n", stats.Max)
+		fmt.Printf("Average: %.2f\n", stats.Average())
+	} else {
+		fmt.Println("\nNo valid amount data to compute stats.")
+	}
 
 	return nil
 }
