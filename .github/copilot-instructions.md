@@ -61,6 +61,7 @@ for {
 ### Group-by Statistics
 
 The `parse` command supports optional group-by statistics via the `--group-by` flag:
+
 - Statistics are calculated both globally and per group
 - Groups are displayed sorted by total sum (descending)
 - Group keys are extracted from the specified column index in `ParseLogicalRowWithGroupBy()`

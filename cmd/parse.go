@@ -7,14 +7,11 @@ import (
 	"io"
 	"log"
 	"os"
-	"sort"
 	"time"
 
 	"github.com/forgeronvirtuel/lab-golang/internal/largedataset"
 	"github.com/spf13/cobra"
 )
-
-var ()
 
 var parseCmd = &cobra.Command{
 	Use:   "parse",
@@ -32,9 +29,32 @@ You can specify a custom separator and show the first N rows for debugging.`,
 			log.Fatal("separator must be a single character")
 		}
 
+		cfg := ProcessConfig{
+			Path:       filePath,
+			Sep:        rune(separator[0]),
+			HasHeader:  hasHeader,
+			ShowFirst:  showFirst,
+			GroupByCol: groupByCol,
+		}
+
 		start := time.Now()
-		err := processCSV(filePath, rune(separator[0]), hasHeader, showFirst)
-		if err != nil {
+
+		// Build aggregators
+		globalAgg := largedataset.NewGlobalAmountAggregator()
+		var aggs []largedataset.Aggregator
+		aggs = append(aggs, globalAgg)
+
+		if cfg.GroupByCol >= 0 {
+			aggs = append(aggs, largedataset.NewGroupByAggregator())
+		}
+
+		if cfg.ShowFirst > 0 {
+			aggs = append(aggs, largedataset.NewDebugAggregator(cfg.ShowFirst))
+		}
+
+		composite := largedataset.NewCompositeAggregator(aggs...)
+
+		if err := processCSV(cfg, composite); err != nil {
 			log.Fatalf("Error processing CSV: %v", err)
 		}
 		elapsed := time.Since(start)
@@ -54,10 +74,18 @@ func init() {
 	parseCmd.MarkFlagRequired("file")
 }
 
+type ProcessConfig struct {
+	Path       string
+	Sep        rune
+	HasHeader  bool
+	ShowFirst  int
+	GroupByCol int // -1 means no group-by
+}
+
 // processCSV opens the file, streams CSV rows, parses them into LogicalRow,
 // and counts valid / invalid rows.
-func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
-	f, err := os.Open(path)
+func processCSV(cfg ProcessConfig, composite largedataset.Aggregator) error {
+	f, err := os.Open(cfg.Path)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
 	}
@@ -65,24 +93,18 @@ func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
 
 	reader := bufio.NewReader(f)
 	r := csv.NewReader(reader)
-	r.Comma = sep
+	r.Comma = cfg.Sep
 
 	var (
 		totalRows      int
 		validRows      int
 		invalidRows    int
-		stats          = largedataset.NewAmountStats()
-		groupByEnabled = groupByCol >= 0
-		groupByStats   map[string]*largedataset.AmountStats
+		groupByEnabled = cfg.GroupByCol >= 0
 	)
-
-	if groupByEnabled {
-		groupByStats = make(map[string]*largedataset.AmountStats)
-	}
 
 	// Optionally read and ignore the header row
 	var header []string
-	if hasHeader {
+	if cfg.HasHeader {
 		header, err = r.Read()
 		if err != nil {
 			if err == io.EOF {
@@ -118,26 +140,7 @@ func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
 		}
 
 		validRows++
-		stats.Add(logical)
-
-		// Update group-by statistics if enabled
-		if groupByEnabled && logical.GroupKey != "" {
-			groupStats, exists := groupByStats[logical.GroupKey]
-			if !exists {
-				groupStats = largedataset.NewAmountStats()
-				groupByStats[logical.GroupKey] = groupStats
-			}
-			groupStats.Add(logical)
-		}
-
-		// Optionally show first N valid logical rows
-		if showFirst > 0 && validRows <= showFirst {
-			fmt.Printf("Valid row %d: amount=%.2f", totalRows, logical.Amount)
-			if groupByEnabled && logical.GroupKey != "" {
-				fmt.Printf(" [%s]", logical.GroupKey)
-			}
-			fmt.Printf(" raw=%v\n", logical.RawRecord)
-		}
+		composite.Consume(logical)
 	}
 
 	fmt.Printf("\n=== Summary ===\n")
@@ -145,48 +148,8 @@ func processCSV(path string, sep rune, hasHeader bool, showFirst int) error {
 	fmt.Printf("Valid logical rows: %d\n", validRows)
 	fmt.Printf("Invalid rows:       %d\n", invalidRows)
 
-	if stats.HasData() {
-		fmt.Printf("\n=== Amount stats (global) ===\n")
-		fmt.Printf("Count:   %d\n", stats.Count)
-		fmt.Printf("Sum:     %.2f\n", stats.Sum)
-		fmt.Printf("Min:     %.2f\n", stats.Min)
-		fmt.Printf("Max:     %.2f\n", stats.Max)
-		fmt.Printf("Average: %.2f\n", stats.Average())
-	} else {
-		fmt.Println("\nNo valid amount data to compute stats.")
-	}
-
-	// Display group-by statistics if enabled
-	if groupByEnabled && len(groupByStats) > 0 {
-		fmt.Printf("\n=== Group-by statistics ===\n")
-		fmt.Printf("Number of groups: %d\n\n", len(groupByStats))
-
-		// Convert map to slice for sorting
-		type groupStat struct {
-			key   string
-			stats *largedataset.AmountStats
-		}
-		groupList := make([]groupStat, 0, len(groupByStats))
-		for key, stats := range groupByStats {
-			groupList = append(groupList, groupStat{key: key, stats: stats})
-		}
-
-		// Sort groups by sum (descending)
-		sort.Slice(groupList, func(i, j int) bool {
-			return groupList[i].stats.Sum > groupList[j].stats.Sum
-		})
-
-		// Display statistics for each group
-		fmt.Println("Groups sorted by total sum (descending):")
-		for i, group := range groupList {
-			fmt.Printf("[%d] %s\n", i+1, group.key)
-			fmt.Printf("  Count:   %d\n", group.stats.Count)
-			fmt.Printf("  Sum:     %.2f\n", group.stats.Sum)
-			fmt.Printf("  Min:     %.2f\n", group.stats.Min)
-			fmt.Printf("  Max:     %.2f\n", group.stats.Max)
-			fmt.Printf("  Average: %.2f\n\n", group.stats.Average())
-		}
-	}
+	// Detailed reports
+	composite.Report(os.Stdout)
 
 	return nil
 }
