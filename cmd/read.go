@@ -10,12 +10,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	filePath  string
-	separator string
-	showFirst int
-)
-
 var readCmd = &cobra.Command{
 	Use:   "read",
 	Short: "Read and display CSV file contents",
@@ -42,6 +36,7 @@ func init() {
 	readCmd.Flags().StringVarP(&filePath, "file", "f", "", "Path to the CSV file (required)")
 	readCmd.Flags().StringVarP(&separator, "sep", "s", ",", "CSV separator (single character)")
 	readCmd.Flags().IntVar(&showFirst, "show-first", 5, "Show first N rows for debugging (0 to disable)")
+	readCmd.Flags().BoolVar(&hasHeader, "has-header", false, "Specify if the CSV file has a header row")
 
 	readCmd.MarkFlagRequired("file")
 }

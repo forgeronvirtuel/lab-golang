@@ -11,11 +11,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var (
-	outputFile string
-	numRows    int
-)
-
 // Données boursières factices
 var (
 	symbols = []string{
