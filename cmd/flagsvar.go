@@ -7,4 +7,5 @@ var (
 	separator  string
 	showFirst  int
 	hasHeader  bool
+	groupByCol int
 )

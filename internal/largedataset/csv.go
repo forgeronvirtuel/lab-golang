@@ -10,9 +10,14 @@ import (
 type LogicalRow struct {
 	RawRecord []string // keep the original record if needed
 	Amount    float64  // parsed numeric column
+	GroupKey  string   // optional group-by key
 }
 
 func ParseLogicalRow(record []string) (*LogicalRow, error) {
+	return ParseLogicalRowWithGroupBy(record, -1)
+}
+
+func ParseLogicalRowWithGroupBy(record []string, groupByIndex int) (*LogicalRow, error) {
 	const amountIndex = 8
 
 	if len(record) <= amountIndex {
@@ -27,8 +32,15 @@ func ParseLogicalRow(record []string) (*LogicalRow, error) {
 		return nil, fmt.Errorf("invalid amount %q: %w", rawAmount, err)
 	}
 
-	return &LogicalRow{
+	logicalRow := &LogicalRow{
 		RawRecord: record,
 		Amount:    amount,
-	}, nil
+	}
+
+	// Extract group-by key if enabled
+	if groupByIndex >= 0 && groupByIndex < len(record) {
+		logicalRow.GroupKey = record[groupByIndex]
+	}
+
+	return logicalRow, nil
 }
