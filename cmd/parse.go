@@ -17,11 +17,12 @@ var parseCmd = &cobra.Command{
 	Use:   "parse",
 	Short: "Read and display CSV file contents",
 	Long: `Read a CSV file and display its contents with statistics.
-You can specify a custom separator, show the first N rows, enable group-by, and validate schema.`,
+You can specify a custom separator, show the first N rows, enable group-by, validate schema, and apply filters.`,
 	Example: `  lab-golang parse --file data.csv
   lab-golang parse --file data.csv --sep ";" --show-first 10 --has-header
   lab-golang parse --file data.csv --has-header --group-by 2
-  lab-golang parse --file data.csv --has-header --validate`,
+  lab-golang parse --file data.csv --has-header --validate
+  lab-golang parse --file data.csv --has-header --filter "Price > 100" --filter "Symbol = 'AAPL'"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if filePath == "" {
 			log.Fatal("you must provide --file path to a CSV file")
@@ -37,6 +38,7 @@ You can specify a custom separator, show the first N rows, enable group-by, and 
 			HasHeader:  hasHeader,
 			ShowFirst:  showFirst,
 			GroupByCol: groupByCol,
+			Filters:    filters,
 		}
 
 		start := time.Now()
@@ -80,6 +82,7 @@ func init() {
 	parseCmd.Flags().BoolVar(&hasHeader, "has-header", false, "Specify if the CSV file has a header row")
 	parseCmd.Flags().IntVar(&groupByCol, "group-by", -1, "Column index (0-based) for group-by statistics (-1 to disable)")
 	parseCmd.Flags().BoolVar(&validate, "validate", false, "Enable CSV schema validation for stock market data")
+	parseCmd.Flags().StringArrayVar(&filters, "filter", []string{}, "Filter expression (can be specified multiple times, e.g., --filter \"Price > 100\")")
 
 	parseCmd.MarkFlagRequired("file")
 }
@@ -89,7 +92,8 @@ type ProcessConfig struct {
 	Sep        rune
 	HasHeader  bool
 	ShowFirst  int
-	GroupByCol int // -1 means no group-by
+	GroupByCol int      // -1 means no group-by
+	Filters    []string // Filter expressions
 }
 
 // processCSV opens the file, streams CSV rows, parses them into LogicalRow,
@@ -110,6 +114,7 @@ func processCSV(cfg ProcessConfig, schema *largedataset.CSVSchema, composite lar
 		validRows        int
 		invalidRows      int
 		validationErrors int
+		filteredRows     int
 		groupByEnabled   = cfg.GroupByCol >= 0
 	)
 
@@ -127,6 +132,16 @@ func processCSV(cfg ProcessConfig, schema *largedataset.CSVSchema, composite lar
 		if groupByEnabled && groupByCol < len(header) {
 			fmt.Printf("Group-by column: %s (index %d)\n", header[groupByCol], groupByCol)
 		}
+	}
+
+	// Parse filters if any
+	var filterSet *largedataset.FilterSet
+	if len(cfg.Filters) > 0 {
+		filterSet, err = largedataset.NewFilterSet(cfg.Filters, header)
+		if err != nil {
+			return fmt.Errorf("failed to parse filters: %w", err)
+		}
+		fmt.Printf("Filters: %s\n", filterSet.String())
 	}
 
 	for {
@@ -150,6 +165,19 @@ func processCSV(cfg ProcessConfig, schema *largedataset.CSVSchema, composite lar
 			}
 		}
 
+		// Apply filters if any
+		if filterSet != nil {
+			match, err := filterSet.Evaluate(record)
+			if err != nil {
+				log.Printf("row %d filter error: %v", totalRows, err)
+				continue
+			}
+			if !match {
+				filteredRows++
+				continue // Skip this row
+			}
+		}
+
 		logical, err := largedataset.ParseLogicalRowWithGroupBy(record, groupByCol)
 		if err != nil {
 			invalidRows++
@@ -165,6 +193,9 @@ func processCSV(cfg ProcessConfig, schema *largedataset.CSVSchema, composite lar
 
 	fmt.Printf("\n=== Summary ===\n")
 	fmt.Printf("Total rows read:    %d\n", totalRows)
+	if len(cfg.Filters) > 0 {
+		fmt.Printf("Filtered out:       %d\n", filteredRows)
+	}
 	fmt.Printf("Valid logical rows: %d\n", validRows)
 	if schema != nil {
 		fmt.Printf("Validation errors:  %d\n", validationErrors)

@@ -9,4 +9,5 @@ var (
 	hasHeader  bool
 	groupByCol int
 	validate   bool
+	filters    []string
 )
