@@ -16,10 +16,12 @@ import (
 var parseCmd = &cobra.Command{
 	Use:   "parse",
 	Short: "Read and display CSV file contents",
-	Long: `Read a CSV file and display its contents.
-You can specify a custom separator and show the first N rows for debugging.`,
+	Long: `Read a CSV file and display its contents with statistics.
+You can specify a custom separator, show the first N rows, enable group-by, and validate schema.`,
 	Example: `  lab-golang parse --file data.csv
-  lab-golang parse --file data.csv --sep ";" --show-first 10 --has-header`,
+  lab-golang parse --file data.csv --sep ";" --show-first 10 --has-header
+  lab-golang parse --file data.csv --has-header --group-by 2
+  lab-golang parse --file data.csv --has-header --validate`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if filePath == "" {
 			log.Fatal("you must provide --file path to a CSV file")
@@ -39,6 +41,13 @@ You can specify a custom separator and show the first N rows for debugging.`,
 
 		start := time.Now()
 
+		// Initialize schema if validation is enabled
+		var schema *largedataset.CSVSchema
+		if validate {
+			schema = largedataset.NewStockDataSchema()
+			fmt.Printf("Schema validation: ENABLED\n")
+		}
+
 		// Build aggregators
 		globalAgg := largedataset.NewGlobalAmountAggregator()
 		var aggs []largedataset.Aggregator
@@ -54,7 +63,7 @@ You can specify a custom separator and show the first N rows for debugging.`,
 
 		composite := largedataset.NewCompositeAggregator(aggs...)
 
-		if err := processCSV(cfg, composite); err != nil {
+		if err := processCSV(cfg, schema, composite); err != nil {
 			log.Fatalf("Error processing CSV: %v", err)
 		}
 		elapsed := time.Since(start)
@@ -70,6 +79,7 @@ func init() {
 	parseCmd.Flags().IntVar(&showFirst, "show-first", 5, "Show first N rows for debugging (0 to disable)")
 	parseCmd.Flags().BoolVar(&hasHeader, "has-header", false, "Specify if the CSV file has a header row")
 	parseCmd.Flags().IntVar(&groupByCol, "group-by", -1, "Column index (0-based) for group-by statistics (-1 to disable)")
+	parseCmd.Flags().BoolVar(&validate, "validate", false, "Enable CSV schema validation for stock market data")
 
 	parseCmd.MarkFlagRequired("file")
 }
@@ -84,7 +94,7 @@ type ProcessConfig struct {
 
 // processCSV opens the file, streams CSV rows, parses them into LogicalRow,
 // and counts valid / invalid rows.
-func processCSV(cfg ProcessConfig, composite largedataset.Aggregator) error {
+func processCSV(cfg ProcessConfig, schema *largedataset.CSVSchema, composite largedataset.Aggregator) error {
 	f, err := os.Open(cfg.Path)
 	if err != nil {
 		return fmt.Errorf("failed to open file: %w", err)
@@ -96,10 +106,11 @@ func processCSV(cfg ProcessConfig, composite largedataset.Aggregator) error {
 	r.Comma = cfg.Sep
 
 	var (
-		totalRows      int
-		validRows      int
-		invalidRows    int
-		groupByEnabled = cfg.GroupByCol >= 0
+		totalRows        int
+		validRows        int
+		invalidRows      int
+		validationErrors int
+		groupByEnabled   = cfg.GroupByCol >= 0
 	)
 
 	// Optionally read and ignore the header row
@@ -130,6 +141,15 @@ func processCSV(cfg ProcessConfig, composite largedataset.Aggregator) error {
 
 		totalRows++
 
+		// Validate schema if enabled
+		if schema != nil {
+			if err := schema.ValidateRecord(record); err != nil {
+				validationErrors++
+				log.Printf("row %d validation error: %v", totalRows, err)
+				continue
+			}
+		}
+
 		logical, err := largedataset.ParseLogicalRowWithGroupBy(record, groupByCol)
 		if err != nil {
 			invalidRows++
@@ -146,7 +166,11 @@ func processCSV(cfg ProcessConfig, composite largedataset.Aggregator) error {
 	fmt.Printf("\n=== Summary ===\n")
 	fmt.Printf("Total rows read:    %d\n", totalRows)
 	fmt.Printf("Valid logical rows: %d\n", validRows)
-	fmt.Printf("Invalid rows:       %d\n", invalidRows)
+	if schema != nil {
+		fmt.Printf("Validation errors:  %d\n", validationErrors)
+	} else {
+		fmt.Printf("Invalid rows:       %d\n", invalidRows)
+	}
 
 	// Detailed reports
 	composite.Report(os.Stdout)

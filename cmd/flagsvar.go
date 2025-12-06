@@ -8,4 +8,5 @@ var (
 	showFirst  int
 	hasHeader  bool
 	groupByCol int
+	validate   bool
 )
