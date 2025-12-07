@@ -34,9 +34,35 @@ type Filter struct {
 	RegexPat    *regexp.Regexp // Compiled regex pattern (for regex operator)
 }
 
-// FilterSet represents a collection of filters (AND logic)
+// LogicalOperator represents AND or OR
+type LogicalOperator int
+
+const (
+	LogicalAND LogicalOperator = iota
+	LogicalOR
+)
+
+// FilterExpression represents a filter expression tree
+type FilterExpression interface {
+	Evaluate(record []string) (bool, error)
+	String() string
+}
+
+// FilterCondition is a leaf node (single filter)
+type FilterCondition struct {
+	Filter *Filter
+}
+
+// FilterGroup is a composite node (multiple expressions with AND/OR)
+type FilterGroup struct {
+	Operator    LogicalOperator
+	Expressions []FilterExpression
+}
+
+// FilterSet represents a collection of filters with support for AND/OR logic
 type FilterSet struct {
-	Filters []*Filter
+	Filters []*Filter        // Deprecated: kept for backward compatibility
+	Root    FilterExpression // Root of the expression tree
 }
 
 // ParseFilter parses a filter expression like "amount > 100" or "symbol = 'AAPL'"
@@ -238,25 +264,313 @@ func (f *Filter) String() string {
 	return fmt.Sprintf("%s %s %q", f.ColumnName, opStr, f.Value)
 }
 
+// Evaluate for FilterCondition
+func (fc *FilterCondition) Evaluate(record []string) (bool, error) {
+	return fc.Filter.Evaluate(record)
+}
+
+// String for FilterCondition
+func (fc *FilterCondition) String() string {
+	return fc.Filter.String()
+}
+
+// Evaluate for FilterGroup
+func (fg *FilterGroup) Evaluate(record []string) (bool, error) {
+	if len(fg.Expressions) == 0 {
+		return true, nil
+	}
+
+	if fg.Operator == LogicalAND {
+		// All expressions must be true
+		for _, expr := range fg.Expressions {
+			match, err := expr.Evaluate(record)
+			if err != nil {
+				return false, err
+			}
+			if !match {
+				return false, nil // Short-circuit on first false
+			}
+		}
+		return true, nil
+	} else { // LogicalOR
+		// At least one expression must be true
+		for _, expr := range fg.Expressions {
+			match, err := expr.Evaluate(record)
+			if err != nil {
+				return false, err
+			}
+			if match {
+				return true, nil // Short-circuit on first true
+			}
+		}
+		return false, nil
+	}
+}
+
+// String for FilterGroup
+func (fg *FilterGroup) String() string {
+	if len(fg.Expressions) == 0 {
+		return ""
+	}
+	if len(fg.Expressions) == 1 {
+		return fg.Expressions[0].String()
+	}
+
+	operator := " AND "
+	if fg.Operator == LogicalOR {
+		operator = " OR "
+	}
+
+	var parts []string
+	for _, expr := range fg.Expressions {
+		exprStr := expr.String()
+		// Add parentheses if it's a group
+		if _, isGroup := expr.(*FilterGroup); isGroup {
+			exprStr = "(" + exprStr + ")"
+		}
+		parts = append(parts, exprStr)
+	}
+	return strings.Join(parts, operator)
+}
+
 // NewFilterSet creates a new filter set from multiple filter expressions
+// Supports both simple (backward compatible) and complex (with AND/OR) expressions
 func NewFilterSet(filterExprs []string, header []string) (*FilterSet, error) {
 	fs := &FilterSet{
 		Filters: make([]*Filter, 0, len(filterExprs)),
 	}
 
+	// Backward compatibility: if multiple expressions, treat as AND by default
+	if len(filterExprs) == 0 {
+		fs.Root = &FilterGroup{Operator: LogicalAND, Expressions: []FilterExpression{}}
+		return fs, nil
+	}
+
+	// Parse expressions
+	var expressions []FilterExpression
 	for _, expr := range filterExprs {
-		filter, err := ParseFilter(expr, header)
+		parsed, err := parseComplexFilter(expr, header)
 		if err != nil {
 			return nil, fmt.Errorf("failed to parse filter %q: %v", expr, err)
 		}
-		fs.Filters = append(fs.Filters, filter)
+		expressions = append(expressions, parsed)
+
+		// Also populate Filters array for backward compatibility
+		if cond, ok := parsed.(*FilterCondition); ok {
+			fs.Filters = append(fs.Filters, cond.Filter)
+		}
+	}
+
+	// If single expression, use it directly
+	if len(expressions) == 1 {
+		fs.Root = expressions[0]
+	} else {
+		// Multiple expressions: combine with AND (backward compatible behavior)
+		fs.Root = &FilterGroup{
+			Operator:    LogicalAND,
+			Expressions: expressions,
+		}
 	}
 
 	return fs, nil
 }
 
-// Evaluate checks if a record matches all filters (AND logic)
+// parseComplexFilter parses a filter expression with support for AND/OR/parentheses
+func parseComplexFilter(expr string, header []string) (FilterExpression, error) {
+	expr = strings.TrimSpace(expr)
+
+	// Check for parentheses
+	if strings.Contains(expr, "(") || strings.Contains(expr, ")") {
+		return parseGroupedFilter(expr, header)
+	}
+
+	// Check for OR operator (lower precedence)
+	if orParts := splitByLogicalOperator(expr, " OR "); len(orParts) > 1 {
+		var expressions []FilterExpression
+		for _, part := range orParts {
+			subExpr, err := parseComplexFilter(part, header)
+			if err != nil {
+				return nil, err
+			}
+			expressions = append(expressions, subExpr)
+		}
+		return &FilterGroup{Operator: LogicalOR, Expressions: expressions}, nil
+	}
+
+	// Check for AND operator (higher precedence)
+	if andParts := splitByLogicalOperator(expr, " AND "); len(andParts) > 1 {
+		var expressions []FilterExpression
+		for _, part := range andParts {
+			subExpr, err := parseComplexFilter(part, header)
+			if err != nil {
+				return nil, err
+			}
+			expressions = append(expressions, subExpr)
+		}
+		return &FilterGroup{Operator: LogicalAND, Expressions: expressions}, nil
+	}
+
+	// Single filter condition
+	filter, err := ParseFilter(expr, header)
+	if err != nil {
+		return nil, err
+	}
+	return &FilterCondition{Filter: filter}, nil
+}
+
+// parseGroupedFilter handles expressions with parentheses
+func parseGroupedFilter(expr string, header []string) (FilterExpression, error) {
+	expr = strings.TrimSpace(expr)
+
+	// Find matching parentheses and split by logical operators
+	var tokens []string
+	var current strings.Builder
+	depth := 0
+
+	for i := 0; i < len(expr); i++ {
+		ch := expr[i]
+		switch ch {
+		case '(':
+			depth++
+			current.WriteByte(ch)
+		case ')':
+			depth--
+			current.WriteByte(ch)
+		default:
+			current.WriteByte(ch)
+		}
+
+		// Check for logical operators at depth 0
+		if depth == 0 {
+			rest := expr[i:]
+			if strings.HasPrefix(rest, " OR ") {
+				tokens = append(tokens, strings.TrimSpace(current.String()))
+				tokens = append(tokens, "OR")
+				current.Reset()
+				i += 3 // Skip " OR"
+			} else if strings.HasPrefix(rest, " AND ") {
+				tokens = append(tokens, strings.TrimSpace(current.String()))
+				tokens = append(tokens, "AND")
+				current.Reset()
+				i += 4 // Skip " AND"
+			}
+		}
+	}
+
+	if current.Len() > 0 {
+		tokens = append(tokens, strings.TrimSpace(current.String()))
+	}
+
+	// Parse tokens
+	return parseTokens(tokens, header)
+}
+
+// parseTokens converts a list of tokens into an expression tree
+func parseTokens(tokens []string, header []string) (FilterExpression, error) {
+	if len(tokens) == 0 {
+		return nil, fmt.Errorf("empty expression")
+	}
+
+	if len(tokens) == 1 {
+		token := tokens[0]
+		// Remove outer parentheses if present
+		if strings.HasPrefix(token, "(") && strings.HasSuffix(token, ")") {
+			token = strings.TrimSpace(token[1 : len(token)-1])
+			return parseComplexFilter(token, header)
+		}
+		return parseComplexFilter(token, header)
+	}
+
+	// Find OR operators first (lower precedence)
+	for i, token := range tokens {
+		if token == "OR" {
+			left, err := parseTokens(tokens[:i], header)
+			if err != nil {
+				return nil, err
+			}
+			right, err := parseTokens(tokens[i+1:], header)
+			if err != nil {
+				return nil, err
+			}
+
+			// Merge with existing OR group if possible
+			if leftGroup, ok := left.(*FilterGroup); ok && leftGroup.Operator == LogicalOR {
+				leftGroup.Expressions = append(leftGroup.Expressions, right)
+				return leftGroup, nil
+			}
+
+			return &FilterGroup{
+				Operator:    LogicalOR,
+				Expressions: []FilterExpression{left, right},
+			}, nil
+		}
+	}
+
+	// Find AND operators (higher precedence)
+	for i, token := range tokens {
+		if token == "AND" {
+			left, err := parseTokens(tokens[:i], header)
+			if err != nil {
+				return nil, err
+			}
+			right, err := parseTokens(tokens[i+1:], header)
+			if err != nil {
+				return nil, err
+			}
+
+			// Merge with existing AND group if possible
+			if leftGroup, ok := left.(*FilterGroup); ok && leftGroup.Operator == LogicalAND {
+				leftGroup.Expressions = append(leftGroup.Expressions, right)
+				return leftGroup, nil
+			}
+
+			return &FilterGroup{
+				Operator:    LogicalAND,
+				Expressions: []FilterExpression{left, right},
+			}, nil
+		}
+	}
+
+	return nil, fmt.Errorf("invalid token sequence")
+}
+
+// splitByLogicalOperator splits an expression by a logical operator (outside parentheses)
+func splitByLogicalOperator(expr string, operator string) []string {
+	var parts []string
+	var current strings.Builder
+	depth := 0
+
+	for i := 0; i < len(expr); i++ {
+		ch := expr[i]
+		if ch == '(' {
+			depth++
+			current.WriteByte(ch)
+		} else if ch == ')' {
+			depth--
+			current.WriteByte(ch)
+		} else if depth == 0 && strings.HasPrefix(expr[i:], operator) {
+			parts = append(parts, strings.TrimSpace(current.String()))
+			current.Reset()
+			i += len(operator) - 1
+		} else {
+			current.WriteByte(ch)
+		}
+	}
+
+	if current.Len() > 0 {
+		parts = append(parts, strings.TrimSpace(current.String()))
+	}
+
+	return parts
+}
+
+// Evaluate checks if a record matches the filter expression tree
 func (fs *FilterSet) Evaluate(record []string) (bool, error) {
+	if fs.Root != nil {
+		return fs.Root.Evaluate(record)
+	}
+
+	// Backward compatibility: use Filters array with AND logic
 	for _, filter := range fs.Filters {
 		match, err := filter.Evaluate(record)
 		if err != nil {
@@ -271,6 +585,11 @@ func (fs *FilterSet) Evaluate(record []string) (bool, error) {
 
 // String returns a human-readable representation of the filter set
 func (fs *FilterSet) String() string {
+	if fs.Root != nil {
+		return fs.Root.String()
+	}
+
+	// Backward compatibility
 	if len(fs.Filters) == 0 {
 		return "no filters"
 	}
