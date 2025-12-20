@@ -37,7 +37,7 @@ type SchemaInferenceConfig struct {
 	SampleSize       int     // Number of rows to analyze (0 = all)
 	MinConfidence    float64 // Minimum confidence to infer type (0.0-1.0)
 	MaxUniqueForEnum int     // Max unique values to consider as enum
-	SampleCount      int     // Number of sample values to keep
+	SampleCount      int     // Number of sample values to keepz
 }
 
 // DefaultInferenceConfig returns default configuration for schema inference

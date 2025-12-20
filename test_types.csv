@@ -1,0 +1,6 @@
+ID,Name,Email,Age,Active,JoinDate,LastLogin,Score,Country
+1,John Doe,john@example.com,25,true,2020-01-15,2024-12-01 10:30:00,95.5,US
+2,Jane Smith,jane@example.com,30,false,2019-05-20,2024-12-02 14:20:00,87.3,UK
+3,Bob Johnson,bob@example.com,35,true,2018-11-10,2024-12-03 09:15:00,92.1,US
+4,Alice Brown,alice@example.com,28,true,2021-03-25,2024-12-04 16:45:00,88.9,FR
+5,Charlie Wilson,charlie@example.com,42,false,2017-08-12,2024-12-05 11:00:00,79.4,US

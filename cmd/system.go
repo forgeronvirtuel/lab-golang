@@ -15,7 +15,6 @@ var systemCmd = &cobra.Command{
 	Use:   "system",
 	Short: "Tool to monitor and manipulate system resources",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("System Resource Monitor -- Not fully implemented yet")
 		pids, err := listPids()
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Error listing PIDs: %v\n", err)
@@ -85,7 +84,19 @@ func listPids() (map[int]processInfo, error) {
 }
 
 type ProccessStat struct {
-	Comm string `json:"comm"`
+	Comm  string `json:"comm"`
+	State string `json:"state,omitempty"`
+}
+
+var stateMap = map[rune]string{
+	'R': "Running",
+	'S': "Sleeping (interruptible)",
+	'D': "Sleeping (uninterruptible)",
+	'Z': "Zombie",
+	'T': "Stopped",
+	'W': "Paging",
+	'X': "Dead",
+	'I': "Idle kernel thread",
 }
 
 func getProcessStat(pid int) (*ProccessStat, error) {
@@ -95,6 +106,7 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	}
 	entries := bytes.Split(content, []byte(" "))
 	return &ProccessStat{
-		Comm: string(entries[1]),
+		Comm:  string(entries[1][1 : len(entries[1])-1]),
+		State: stateMap[rune(entries[2][0])],
 	}, nil
 }

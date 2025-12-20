@@ -1,0 +1,1164 @@
+[
+  {
+    "pid": 1,
+    "stat": {
+      "comm": "systemd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 2,
+    "stat": {
+      "comm": "kthreadd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 3,
+    "stat": {
+      "comm": "pool_workqueue_release",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 4,
+    "stat": {
+      "comm": "kworker/R-rcu_gp",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 5,
+    "stat": {
+      "comm": "kworker/R-sync_wq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 6,
+    "stat": {
+      "comm": "kworker/R-kvfree_rcu_reclaim",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 7,
+    "stat": {
+      "comm": "kworker/R-slub_flushwq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 8,
+    "stat": {
+      "comm": "kworker/R-netns",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 11,
+    "stat": {
+      "comm": "kworker/0:0H-events_highpri",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 12,
+    "stat": {
+      "comm": "kworker/u16:0-ipv6_addrconf",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 13,
+    "stat": {
+      "comm": "kworker/R-mm_percpu_wq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 14,
+    "stat": {
+      "comm": "rcu_tasks_kthread",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 15,
+    "stat": {
+      "comm": "rcu_tasks_rude_kthread",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 16,
+    "stat": {
+      "comm": "rcu_tasks_trace_kthread",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 17,
+    "stat": {
+      "comm": "ksoftirqd/0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 18,
+    "stat": {
+      "comm": "rcu_preempt",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 19,
+    "stat": {
+      "comm": "rcu_exp_par_gp_kthread_worker/0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 20,
+    "stat": {
+      "comm": "rcu_exp_gp_kthread_worker",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 21,
+    "stat": {
+      "comm": "migration/0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 22,
+    "stat": {
+      "comm": "idle_inject/0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 23,
+    "stat": {
+      "comm": "cpuhp/0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 24,
+    "stat": {
+      "comm": "cpuhp/1",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 25,
+    "stat": {
+      "comm": "idle_inject/1",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 26,
+    "stat": {
+      "comm": "migration/1",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 27,
+    "stat": {
+      "comm": "ksoftirqd/1",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 29,
+    "stat": {
+      "comm": "kworker/1:0H-events_highpri",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 30,
+    "stat": {
+      "comm": "cpuhp/2",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 31,
+    "stat": {
+      "comm": "idle_inject/2",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 32,
+    "stat": {
+      "comm": "migration/2",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 33,
+    "stat": {
+      "comm": "ksoftirqd/2",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 35,
+    "stat": {
+      "comm": "kworker/2:0H-events_highpri",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 36,
+    "stat": {
+      "comm": "cpuhp/3",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 37,
+    "stat": {
+      "comm": "idle_inject/3",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 38,
+    "stat": {
+      "comm": "migration/3",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 39,
+    "stat": {
+      "comm": "ksoftirqd/3",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 41,
+    "stat": {
+      "comm": "kworker/3:0H-events_highpri",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 46,
+    "stat": {
+      "comm": "kdevtmpfs",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 47,
+    "stat": {
+      "comm": "kworker/R-inet_frag_wq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 48,
+    "stat": {
+      "comm": "kauditd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 49,
+    "stat": {
+      "comm": "khungtaskd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 50,
+    "stat": {
+      "comm": "oom_reaper",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 52,
+    "stat": {
+      "comm": "kworker/R-writeback",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 54,
+    "stat": {
+      "comm": "kcompactd0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 55,
+    "stat": {
+      "comm": "ksmd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 56,
+    "stat": {
+      "comm": "khugepaged",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 57,
+    "stat": {
+      "comm": "kworker/R-kintegrityd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 58,
+    "stat": {
+      "comm": "kworker/R-kblockd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 59,
+    "stat": {
+      "comm": "kworker/R-blkcg_punt_bio",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 60,
+    "stat": {
+      "comm": "irq/9-acpi",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 63,
+    "stat": {
+      "comm": "kworker/R-tpm_dev_wq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 64,
+    "stat": {
+      "comm": "kworker/R-ata_sff",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 65,
+    "stat": {
+      "comm": "kworker/R-md",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 66,
+    "stat": {
+      "comm": "kworker/R-md_bitmap",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 67,
+    "stat": {
+      "comm": "kworker/R-edac-poller",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 68,
+    "stat": {
+      "comm": "kworker/R-devfreq_wq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 69,
+    "stat": {
+      "comm": "watchdogd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 71,
+    "stat": {
+      "comm": "kworker/1:1H-kblockd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 72,
+    "stat": {
+      "comm": "kswapd0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 73,
+    "stat": {
+      "comm": "ecryptfs-kthread",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 74,
+    "stat": {
+      "comm": "kworker/R-kthrotld",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 75,
+    "stat": {
+      "comm": "kworker/R-acpi_thermal_pm",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 77,
+    "stat": {
+      "comm": "scsi_eh_0",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 78,
+    "stat": {
+      "comm": "kworker/R-scsi_tmf_0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 80,
+    "stat": {
+      "comm": "scsi_eh_1",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 81,
+    "stat": {
+      "comm": "kworker/R-scsi_tmf_1",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 82,
+    "stat": {
+      "comm": "scsi_eh_2",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 83,
+    "stat": {
+      "comm": "kworker/R-scsi_tmf_2",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 87,
+    "stat": {
+      "comm": "kworker/R-mld",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 88,
+    "stat": {
+      "comm": "kworker/0:1H-kblockd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89,
+    "stat": {
+      "comm": "kworker/R-ipv6_addrconf",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90,
+    "stat": {
+      "comm": "kworker/u16:1",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 97,
+    "stat": {
+      "comm": "kworker/R-kstrp",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 100,
+    "stat": {
+      "comm": "kworker/u21:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 101,
+    "stat": {
+      "comm": "kworker/u22:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 102,
+    "stat": {
+      "comm": "kworker/u23:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 103,
+    "stat": {
+      "comm": "kworker/u24:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 104,
+    "stat": {
+      "comm": "kworker/u25:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 109,
+    "stat": {
+      "comm": "kworker/R-cryptd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 118,
+    "stat": {
+      "comm": "kworker/R-charger_manager",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 145,
+    "stat": {
+      "comm": "kworker/2:1H-kblockd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 150,
+    "stat": {
+      "comm": "kworker/3:1H-kblockd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 235,
+    "stat": {
+      "comm": "kworker/R-raid5wq",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 276,
+    "stat": {
+      "comm": "jbd2/sda1-8",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 277,
+    "stat": {
+      "comm": "kworker/R-ext4-rsv-conversion",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 364,
+    "stat": {
+      "comm": "systemd-journal",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 379,
+    "stat": {
+      "comm": "kworker/R-kmpathd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 380,
+    "stat": {
+      "comm": "kworker/R-kmpath_handlerd",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 408,
+    "stat": {
+      "comm": "multipathd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 430,
+    "stat": {
+      "comm": "systemd-timesyn",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 433,
+    "stat": {
+      "comm": "systemd-resolve",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 437,
+    "stat": {
+      "comm": "systemd-udevd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 445,
+    "stat": {
+      "comm": "psimon",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 547,
+    "stat": {
+      "comm": "jbd2/sda13-8",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 548,
+    "stat": {
+      "comm": "kworker/R-ext4-rsv-conversion",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 764,
+    "stat": {
+      "comm": "systemd-network",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 821,
+    "stat": {
+      "comm": "dbus-daemon",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 825,
+    "stat": {
+      "comm": "polkitd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 828,
+    "stat": {
+      "comm": "qemu-ga",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 831,
+    "stat": {
+      "comm": "snapd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 833,
+    "stat": {
+      "comm": "systemd-logind",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 835,
+    "stat": {
+      "comm": "udisksd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 879,
+    "stat": {
+      "comm": "unattended-upgr",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 901,
+    "stat": {
+      "comm": "ModemManager",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 913,
+    "stat": {
+      "comm": "rsyslogd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 922,
+    "stat": {
+      "comm": "postgres",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 930,
+    "stat": {
+      "comm": "postgres",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 931,
+    "stat": {
+      "comm": "postgres",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 933,
+    "stat": {
+      "comm": "postgres",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 934,
+    "stat": {
+      "comm": "postgres",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 935,
+    "stat": {
+      "comm": "postgres",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 977,
+    "stat": {
+      "comm": "cron",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 996,
+    "stat": {
+      "comm": "sshd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 1000,
+    "stat": {
+      "comm": "agetty",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 1010,
+    "stat": {
+      "comm": "agetty",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 5871,
+    "stat": {
+      "comm": "fwupd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 32238,
+    "stat": {
+      "comm": "kworker/R-tls-strp",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 70565,
+    "stat": {
+      "comm": "systemd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 70567,
+    "stat": {
+      "comm": "(sd-pam)",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 71016,
+    "stat": {
+      "comm": "sh",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 71020,
+    "stat": {
+      "comm": "node",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 71305,
+    "stat": {
+      "comm": "node",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 78405,
+    "stat": {
+      "comm": "rootlesskit",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 78419,
+    "stat": {
+      "comm": "exe",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 78437,
+    "stat": {
+      "comm": "slirp4netns",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 78446,
+    "stat": {
+      "comm": "dockerd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 78469,
+    "stat": {
+      "comm": "containerd",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 81979,
+    "stat": {
+      "comm": "psimon",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 83305,
+    "stat": {
+      "comm": "dbus-daemon",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 84023,
+    "stat": {
+      "comm": "kworker/1:0-events",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 84479,
+    "stat": {
+      "comm": "kworker/0:0-events",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 84487,
+    "stat": {
+      "comm": "kworker/u19:1-events_power_efficient",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 84545,
+    "stat": {
+      "comm": "kworker/3:0-cgroup_destroy",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 84619,
+    "stat": {
+      "comm": "sshd-session",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 84716,
+    "stat": {
+      "comm": "sshd-session",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 84717,
+    "stat": {
+      "comm": "sh",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 84735,
+    "stat": {
+      "comm": "code-618725e675",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 84766,
+    "stat": {
+      "comm": "node",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 84777,
+    "stat": {
+      "comm": "node",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 85027,
+    "stat": {
+      "comm": "sh",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 85215,
+    "stat": {
+      "comm": "gopls",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 85267,
+    "stat": {
+      "comm": "gopls",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 85440,
+    "stat": {
+      "comm": "bash",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 86673,
+    "stat": {
+      "comm": "bash",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 87246,
+    "stat": {
+      "comm": "kworker/u20:1-flush-8:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 87394,
+    "stat": {
+      "comm": "kworker/u20:2-flush-8:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 87507,
+    "stat": {
+      "comm": "kworker/1:2-cgroup_destroy",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 88680,
+    "stat": {
+      "comm": "kworker/u18:0-events_power_efficient",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89163,
+    "stat": {
+      "comm": "kworker/2:2-events",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89309,
+    "stat": {
+      "comm": "kworker/u17:2-ext4-rsv-conversion",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89402,
+    "stat": {
+      "comm": "kworker/u18:3-kvfree_rcu_reclaim",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89412,
+    "stat": {
+      "comm": "kworker/2:0-events",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89416,
+    "stat": {
+      "comm": "kworker/u17:3-events_power_efficient",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89513,
+    "stat": {
+      "comm": "kworker/u19:0-events_unbound",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 89884,
+    "stat": {
+      "comm": "kworker/u20:3-flush-8:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90294,
+    "stat": {
+      "comm": "node",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 90323,
+    "stat": {
+      "comm": "kworker/0:1",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90414,
+    "stat": {
+      "comm": "kworker/u19:2-kvfree_rcu_reclaim",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90443,
+    "stat": {
+      "comm": "kworker/3:1-cgroup_destroy",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90447,
+    "stat": {
+      "comm": "kworker/u18:1-flush-8:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90625,
+    "stat": {
+      "comm": "kworker/u17:0-events_power_efficient",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90635,
+    "stat": {
+      "comm": "kworker/3:2-events",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90637,
+    "stat": {
+      "comm": "kworker/3:3",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90642,
+    "stat": {
+      "comm": "kworker/u20:0",
+      "state": "Idle kernel thread"
+    }
+  },
+  {
+    "pid": 90643,
+    "stat": {
+      "comm": "sleep",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 90672,
+    "stat": {
+      "comm": "go",
+      "state": "Sleeping (interruptible)"
+    }
+  },
+  {
+    "pid": 90718,
+    "stat": {
+      "comm": "main",
+      "state": "Running"
+    }
+  }
+]
