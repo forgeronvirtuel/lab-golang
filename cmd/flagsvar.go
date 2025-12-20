@@ -10,4 +10,7 @@ var (
 	groupByCol int
 	validate   bool
 	filters    []string
+
+	// System command flags
+	showPids bool
 )
