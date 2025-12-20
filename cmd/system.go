@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 	"os"
 	"sort"
@@ -27,24 +29,41 @@ var systemCmd = &cobra.Command{
 		}
 		sort.Ints(sortedPIDs)
 
-		fmt.Printf("Found %d processes\n", len(pids))
-		if showPids {
-			fmt.Printf("PID\n")
-			for _, pid := range sortedPIDs {
-				fmt.Printf("%d\n", pid)
+		// Get stats for each PID
+		for _, pid := range sortedPIDs {
+			stat, err := getProcessStat(pid)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Error getting stat for PID %d: %v\n", pid, err)
+				continue
 			}
+			p := pids[pid]
+			p.Stat = stat
+			pids[pid] = p
 		}
+
+		// Reorder list of processes
+		var reorderedPIDs []processInfo
+		for _, pid := range sortedPIDs {
+			reorderedPIDs = append(reorderedPIDs, pids[pid])
+		}
+
+		// Jsonify and print the process list
+		output, err := json.MarshalIndent(reorderedPIDs, "", "  ")
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Error marshaling process info: %v\n", err)
+			return
+		}
+		fmt.Println(string(output))
 	},
 }
 
 func init() {
-	systemCmd.Flags().BoolVar(&showPids, "show-pids", false, "Show all process IDs")
-
 	rootCmd.AddCommand(systemCmd)
 }
 
 type processInfo struct {
-	pid int
+	Pid  int           `json:"pid"`
+	Stat *ProccessStat `json:"stat,omitempty"`
 }
 
 func listPids() (map[int]processInfo, error) {
@@ -58,9 +77,24 @@ func listPids() (map[int]processInfo, error) {
 	for _, entry := range entries {
 		if entry.IsDir() {
 			if pid, err := strconv.Atoi(entry.Name()); err == nil {
-				pids[pid] = processInfo{pid: pid}
+				pids[pid] = processInfo{Pid: pid}
 			}
 		}
 	}
 	return pids, nil
+}
+
+type ProccessStat struct {
+	Comm string `json:"comm"`
+}
+
+func getProcessStat(pid int) (*ProccessStat, error) {
+	content, err := os.ReadFile(fmt.Sprintf("/proc/%d/stat", pid))
+	if err != nil {
+		return nil, err
+	}
+	entries := bytes.Split(content, []byte(" "))
+	return &ProccessStat{
+		Comm: string(entries[1]),
+	}, nil
 }
