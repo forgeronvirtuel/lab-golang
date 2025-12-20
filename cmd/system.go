@@ -86,6 +86,7 @@ func listPids() (map[int]processInfo, error) {
 type ProccessStat struct {
 	Comm  string `json:"comm"`
 	State string `json:"state,omitempty"`
+	Ppid  int    `json:"ppid,omitempty"`
 }
 
 var stateMap = map[rune]string{
@@ -105,8 +106,14 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 		return nil, err
 	}
 	entries := bytes.Split(content, []byte(" "))
+	ppidString := entries[3]
+	ppid, err := strconv.Atoi(string(ppidString))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse ppid: %w", err)
+	}
 	return &ProccessStat{
 		Comm:  string(entries[1][1 : len(entries[1])-1]),
 		State: stateMap[rune(entries[2][0])],
+		Ppid:  ppid,
 	}, nil
 }
