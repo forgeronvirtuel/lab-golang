@@ -84,20 +84,21 @@ func listPids() (map[int]processInfo, error) {
 }
 
 type ProccessStat struct {
-	Comm    string `json:"comm"`
-	State   string `json:"state"`
-	Ppid    int    `json:"ppid,omitempty"`
-	Pgrp    int    `json:"pgrp"`
-	Session int    `json:"session"`
-	TtyNR   *int   `json:"tty_nr"`
-	Minflt  uint64 `json:"minflt"`
-	Majflt  uint64 `json:"majflt"`
-	Cminflt uint64 `json:"cminflt"`
-	Cmajflt uint64 `json:"cmajflt"`
-	Utime   uint64 `json:"utime"`
-	Stime   uint64 `json:"stime"`
-	Cutime  int64  `json:"cutime"`
-	Cstime  int64  `json:"cstime"`
+	Comm     string `json:"comm"`
+	State    string `json:"state"`
+	Ppid     int    `json:"ppid,omitempty"`
+	Pgrp     int    `json:"pgrp"`
+	Session  int    `json:"session"`
+	TtyNR    *int   `json:"tty_nr"`
+	Minflt   uint64 `json:"minflt"`
+	Majflt   uint64 `json:"majflt"`
+	Cminflt  uint64 `json:"cminflt"`
+	Cmajflt  uint64 `json:"cmajflt"`
+	Utime    uint64 `json:"utime"`
+	Stime    uint64 `json:"stime"`
+	Cutime   int64  `json:"cutime"`
+	Cstime   int64  `json:"cstime"`
+	Priority int32  `json:"priority"`
 }
 
 var stateMap = map[rune]string{
@@ -177,6 +178,11 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse cstime: %w", err)
 	}
+	priorityString := entries[18]
+	priority, err := strconv.ParseInt(string(priorityString), 10, 32)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse priority: %w", err)
+	}
 	return &ProccessStat{
 		Comm:    string(entries[1][1 : len(entries[1])-1]),
 		State:   stateMap[rune(entries[2][0])],
@@ -190,13 +196,14 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 				return &ttyNr
 			}
 		}(),
-		Minflt:  minflt,
-		Majflt:  majflt,
-		Cminflt: cminflt,
-		Cmajflt: cmajflt,
-		Utime:   utime,
-		Stime:   stime,
-		Cutime:  cutime,
-		Cstime:  cstime,
+		Minflt:   minflt,
+		Majflt:   majflt,
+		Cminflt:  cminflt,
+		Cmajflt:  cmajflt,
+		Utime:    utime,
+		Stime:    stime,
+		Cutime:   cutime,
+		Cstime:   cstime,
+		Priority: int32(priority),
 	}, nil
 }
