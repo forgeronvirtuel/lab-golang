@@ -84,10 +84,14 @@ func listPids() (map[int]processInfo, error) {
 }
 
 type ProccessStat struct {
-	Comm  string `json:"comm"`
-	State string `json:"state,omitempty"`
-	Ppid  int    `json:"ppid,omitempty"`
-	Tty   *int   `json:"tty"`
+	Comm    string `json:"comm"`
+	State   string `json:"state,omitempty"`
+	Ppid    int    `json:"ppid,omitempty"`
+	Tty     *int   `json:"tty"`
+	Minflt  uint64 `json:"minflt"`
+	Majflt  uint64 `json:"majflt"`
+	Cminflt uint64 `json:"cminflt"`
+	Cmajflt uint64 `json:"cmajflt"`
 }
 
 var stateMap = map[rune]string{
@@ -117,6 +121,26 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse tty: %w", err)
 	}
+	cminfltString := entries[10]
+	cminflt, err := strconv.ParseUint(string(cminfltString), 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse cminflt: %w", err)
+	}
+	majfltString := entries[12]
+	majflt, err := strconv.ParseUint(string(majfltString), 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse majflt: %w", err)
+	}
+	minfltString := entries[11]
+	minflt, err := strconv.ParseUint(string(minfltString), 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse minflt: %w", err)
+	}
+	cmajfltString := entries[13]
+	cmajflt, err := strconv.ParseUint(string(cmajfltString), 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse cmajflt: %w", err)
+	}
 	return &ProccessStat{
 		Comm:  string(entries[1][1 : len(entries[1])-1]),
 		State: stateMap[rune(entries[2][0])],
@@ -128,5 +152,9 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 				return &tty
 			}
 		}(),
+		Minflt:  minflt,
+		Majflt:  majflt,
+		Cminflt: cminflt,
+		Cmajflt: cmajflt,
 	}, nil
 }
