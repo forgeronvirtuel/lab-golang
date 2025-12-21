@@ -87,6 +87,7 @@ type ProccessStat struct {
 	Comm  string `json:"comm"`
 	State string `json:"state,omitempty"`
 	Ppid  int    `json:"ppid,omitempty"`
+	Tty   *int   `json:"tty"`
 }
 
 var stateMap = map[rune]string{
@@ -111,9 +112,21 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse ppid: %w", err)
 	}
+	ttyString := entries[6]
+	tty, err := strconv.Atoi(string(ttyString))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse tty: %w", err)
+	}
 	return &ProccessStat{
 		Comm:  string(entries[1][1 : len(entries[1])-1]),
 		State: stateMap[rune(entries[2][0])],
 		Ppid:  ppid,
+		Tty: func() *int {
+			if tty == -1 {
+				return nil
+			} else {
+				return &tty
+			}
+		}(),
 	}, nil
 }
