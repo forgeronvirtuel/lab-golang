@@ -85,17 +85,19 @@ func listPids() (map[int]processInfo, error) {
 
 type ProccessStat struct {
 	Comm    string `json:"comm"`
-	State   string `json:"state,omitempty"`
+	State   string `json:"state"`
 	Ppid    int    `json:"ppid,omitempty"`
-	Tty     *int   `json:"tty"`
+	Pgrp    int    `json:"pgrp"`
+	Session int    `json:"session"`
+	TtyNR   *int   `json:"tty_nr"`
 	Minflt  uint64 `json:"minflt"`
 	Majflt  uint64 `json:"majflt"`
 	Cminflt uint64 `json:"cminflt"`
 	Cmajflt uint64 `json:"cmajflt"`
-	Utime   uint64 `json:"utime,omitempty"`
-	Stime   uint64 `json:"stime,omitempty"`
-	Cutime  int64  `json:"cutime,omitempty"`
-	Cstime  int64  `json:"cstime,omitempty"`
+	Utime   uint64 `json:"utime"`
+	Stime   uint64 `json:"stime"`
+	Cutime  int64  `json:"cutime"`
+	Cstime  int64  `json:"cstime"`
 }
 
 var stateMap = map[rune]string{
@@ -120,10 +122,20 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse ppid: %w", err)
 	}
-	ttyString := entries[6]
-	tty, err := strconv.Atoi(string(ttyString))
+	pgrpString := entries[4]
+	pgrp, err := strconv.Atoi(string(pgrpString))
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse tty: %w", err)
+		return nil, fmt.Errorf("failed to parse pgrp: %w", err)
+	}
+	sessionString := entries[5]
+	session, err := strconv.Atoi(string(sessionString))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse session: %w", err)
+	}
+	ttyNrString := entries[6]
+	ttyNr, err := strconv.Atoi(string(ttyNrString))
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse tty_nr: %w", err)
 	}
 	cminfltString := entries[10]
 	cminflt, err := strconv.ParseUint(string(cminfltString), 10, 64)
@@ -166,14 +178,16 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 		return nil, fmt.Errorf("failed to parse cstime: %w", err)
 	}
 	return &ProccessStat{
-		Comm:  string(entries[1][1 : len(entries[1])-1]),
-		State: stateMap[rune(entries[2][0])],
-		Ppid:  ppid,
-		Tty: func() *int {
-			if tty == -1 {
+		Comm:    string(entries[1][1 : len(entries[1])-1]),
+		State:   stateMap[rune(entries[2][0])],
+		Ppid:    ppid,
+		Pgrp:    pgrp,
+		Session: session,
+		TtyNR: func() *int {
+			if ttyNr == -1 {
 				return nil
 			} else {
-				return &tty
+				return &ttyNr
 			}
 		}(),
 		Minflt:  minflt,
