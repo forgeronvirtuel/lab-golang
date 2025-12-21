@@ -94,6 +94,8 @@ type ProccessStat struct {
 	Cmajflt uint64 `json:"cmajflt"`
 	Utime   uint64 `json:"utime,omitempty"`
 	Stime   uint64 `json:"stime,omitempty"`
+	Cutime  int64  `json:"cutime,omitempty"`
+	Cstime  int64  `json:"cstime,omitempty"`
 }
 
 var stateMap = map[rune]string{
@@ -153,6 +155,16 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse stime: %w", err)
 	}
+	cutimeString := entries[16]
+	cutime, err := strconv.ParseInt(string(cutimeString), 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse cutime: %w", err)
+	}
+	cstimeString := entries[17]
+	cstime, err := strconv.ParseInt(string(cstimeString), 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse cstime: %w", err)
+	}
 	return &ProccessStat{
 		Comm:  string(entries[1][1 : len(entries[1])-1]),
 		State: stateMap[rune(entries[2][0])],
@@ -170,5 +182,7 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 		Cmajflt: cmajflt,
 		Utime:   utime,
 		Stime:   stime,
+		Cutime:  cutime,
+		Cstime:  cstime,
 	}, nil
 }
