@@ -117,75 +117,98 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	entries := bytes.Split(content, []byte(" "))
+
+	comm := string(entries[1][1 : len(entries[1])-1])
+
+	stateRune := rune(entries[2][0])
+	state, ok := stateMap[stateRune]
+	if !ok {
+		state = "Unknown"
+	}
+
 	ppidString := entries[3]
 	ppid, err := strconv.Atoi(string(ppidString))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse ppid: %w", err)
 	}
+
 	pgrpString := entries[4]
 	pgrp, err := strconv.Atoi(string(pgrpString))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse pgrp: %w", err)
 	}
+
 	sessionString := entries[5]
 	session, err := strconv.Atoi(string(sessionString))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse session: %w", err)
 	}
+
 	ttyNrString := entries[6]
 	ttyNr, err := strconv.Atoi(string(ttyNrString))
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse tty_nr: %w", err)
 	}
+
 	cminfltString := entries[10]
 	cminflt, err := strconv.ParseUint(string(cminfltString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse cminflt: %w", err)
 	}
+
 	majfltString := entries[12]
 	majflt, err := strconv.ParseUint(string(majfltString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse majflt: %w", err)
 	}
+
 	minfltString := entries[11]
 	minflt, err := strconv.ParseUint(string(minfltString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse minflt: %w", err)
 	}
+
 	cmajfltString := entries[13]
 	cmajflt, err := strconv.ParseUint(string(cmajfltString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse cmajflt: %w", err)
 	}
+
 	utimeString := entries[14]
 	utime, err := strconv.ParseUint(string(utimeString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse utime: %w", err)
 	}
+
 	stimeString := entries[15]
 	stime, err := strconv.ParseUint(string(stimeString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse stime: %w", err)
 	}
+
 	cutimeString := entries[16]
 	cutime, err := strconv.ParseInt(string(cutimeString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse cutime: %w", err)
 	}
+
 	cstimeString := entries[17]
 	cstime, err := strconv.ParseInt(string(cstimeString), 10, 64)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse cstime: %w", err)
 	}
+
 	priorityString := entries[18]
 	priority, err := strconv.ParseInt(string(priorityString), 10, 32)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse priority: %w", err)
 	}
+
 	return &ProccessStat{
-		Comm:    string(entries[1][1 : len(entries[1])-1]),
-		State:   stateMap[rune(entries[2][0])],
+		Comm:    comm,
+		State:   state,
 		Ppid:    ppid,
 		Pgrp:    pgrp,
 		Session: session,
