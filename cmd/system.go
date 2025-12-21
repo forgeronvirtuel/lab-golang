@@ -98,7 +98,8 @@ type ProccessStat struct {
 	Stime    uint64 `json:"stime"`
 	Cutime   int64  `json:"cutime"`
 	Cstime   int64  `json:"cstime"`
-	Priority int32  `json:"priority"`
+	Priority int64  `json:"priority"`
+	Nice     int64  `json:"nice"`
 }
 
 var stateMap = map[rune]string{
@@ -206,6 +207,12 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 		return nil, fmt.Errorf("failed to parse priority: %w", err)
 	}
 
+	niceString := string(entries[19])
+	nice, err := strconv.ParseInt(niceString, 10, 32)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse nice: %w", err)
+	}
+
 	return &ProccessStat{
 		Comm:    comm,
 		State:   state,
@@ -227,6 +234,7 @@ func getProcessStat(pid int) (*ProccessStat, error) {
 		Stime:    stime,
 		Cutime:   cutime,
 		Cstime:   cstime,
-		Priority: int32(priority),
+		Priority: priority,
+		Nice:     nice,
 	}, nil
 }
