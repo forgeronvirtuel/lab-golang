@@ -10,4 +10,7 @@ var (
 	groupByCol int
 	validate   bool
 	filters    []string
+	// Pub/Sub server flags
+	serverPort string
+	serverHost string
 )
