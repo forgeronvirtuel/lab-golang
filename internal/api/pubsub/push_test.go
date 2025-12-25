@@ -10,32 +10,31 @@ import (
 )
 
 func TestHandlePush(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+
 	queue := NewQueue()
-	handler := NewPushHandler()
+	handler := NewPushHandler(queue)
 
-	// Create a test context with a sample payload
+	r := gin.New()
+	r.POST("/push", handler.HandlePush)
+
 	w := httptest.NewRecorder()
-	c, _ := gin.CreateTestContext(w)
-	payload := []byte("test message")
-	c.Request, _ = http.NewRequest("POST", "/push", bytes.NewBuffer(payload))
+	req := httptest.NewRequest("POST", "/push", bytes.NewBufferString("test message"))
 
-	// Call the handler
-	handler.HandlePush(c)
+	r.ServeHTTP(w, req)
 
-	// Check the response
 	if w.Code != http.StatusCreated {
-		t.Errorf("expected status %d, got %d", http.StatusCreated, w.Code)
+		t.Fatalf("expected status %d, got %d", http.StatusCreated, w.Code)
 	}
 
-	// Verify that the message was enqueued
 	if queue.Size() != 1 {
-		t.Errorf("expected queue size 1, got %d", queue.Size())
+		t.Fatalf("expected queue size 1, got %d", queue.Size())
 	}
 	value, ok := queue.Dequeue()
 	if !ok {
-		t.Errorf("expected successful dequeue")
+		t.Fatalf("expected successful dequeue")
 	}
 	if string(value) != "test message" {
-		t.Errorf("expected 'test message', got '%s'", value)
+		t.Fatalf("expected 'test message', got '%s'", value)
 	}
 }
