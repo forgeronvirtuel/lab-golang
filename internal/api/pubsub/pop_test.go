@@ -9,7 +9,7 @@ import (
 )
 
 func TestPopHandler(t *testing.T) {
-	queue := NewQueue()
+	queue := NewQueue[[]byte]()
 	handler := NewPopHandler(queue)
 
 	// Enqueue a sample message

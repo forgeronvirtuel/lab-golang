@@ -1,4 +1,4 @@
-package httpsrv
+package pubsub
 
 import (
 	"bytes"
@@ -69,8 +69,8 @@ func TestReadFrameHeader_Success(t *testing.T) {
 			}
 
 			// Verify frame
-			if frame.Channel != tt.channel {
-				t.Errorf("channel = %q, want %q", frame.Channel, tt.channel)
+			if frame.ChannelName != tt.channel {
+				t.Errorf("channel = %q, want %q", frame.ChannelName, tt.channel)
 			}
 			if frame.DataLen != tt.dataLen {
 				t.Errorf("dataLen = %d, want %d", frame.DataLen, tt.dataLen)
@@ -279,8 +279,8 @@ func TestReadFrameHeader_BoundaryValues(t *testing.T) {
 		if err != nil {
 			t.Fatalf("unexpected error: %v", err)
 		}
-		if frame.Channel != "0123456789" {
-			t.Errorf("channel = %q, want %q", frame.Channel, "0123456789")
+		if frame.ChannelName != "0123456789" {
+			t.Errorf("channel = %q, want %q", frame.ChannelName, "0123456789")
 		}
 	})
 

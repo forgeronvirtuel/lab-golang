@@ -3,15 +3,14 @@ package pubsub
 import (
 	"net/http"
 
-	"github.com/forgeronvirtuel/lab-golang/internal/httpsrv"
 	"github.com/gin-gonic/gin"
 )
 
 type PushHandler struct {
-	Queue *Queue
+	Queue *Queue[*Frame]
 }
 
-func NewPushHandler(q *Queue) *PushHandler {
+func NewPushHandler(q *Queue[*Frame]) *PushHandler {
 	return &PushHandler{Queue: q}
 }
 
@@ -23,21 +22,23 @@ func (h *PushHandler) HandlePush(c *gin.Context) {
 
 	// Read the header
 	c.Request.Body = http.MaxBytesReader(c.Writer, c.Request.Body, maxBody)
-	header, br, err := httpsrv.ReadFrameHeader(c.Request.Body, maxChannelLen, 50<<20)
+	frame, br, err := ReadFrameHeader(c.Request.Body, maxChannelLen, 50<<20)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
 	// Read the message data
-	data := make([]byte, header.DataLen)
+	data := make([]byte, frame.DataLen)
 	if _, err := br.Read(data); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "failed to read message data"})
 		return
 	}
 
+	frame.Data = data
+
 	// Enqueue the message
-	h.Queue.Enqueue(data)
+	h.Queue.Enqueue(&frame)
 
 	// Respond with success
 	c.Status(http.StatusCreated)

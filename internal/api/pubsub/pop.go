@@ -7,10 +7,10 @@ import (
 )
 
 type PopHandler struct {
-	Queue *Queue
+	Queue *Queue[[]byte]
 }
 
-func NewPopHandler(queue *Queue) *PopHandler {
+func NewPopHandler(queue *Queue[[]byte]) *PopHandler {
 	return &PopHandler{Queue: queue}
 }
 
