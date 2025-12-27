@@ -1,4 +1,4 @@
-package httpsrv
+package pubsub
 
 import (
 	"bufio"
@@ -7,14 +7,31 @@ import (
 	"io"
 )
 
+type Channel struct {
+	Name string
+	Q    *Queue[[]byte]
+}
+
+func NewChannel(name string, q *Queue[[]byte]) *Channel {
+	return &Channel{
+		Name: name,
+		Q:    q,
+	}
+}
+
+func (ch *Channel) Queue() *Queue[[]byte] {
+	return ch.Q
+}
+
 var (
 	ErrChannelTooLarge = errors.New("channel too large")
 	ErrDataTooLarge    = errors.New("data too large")
 )
 
 type Frame struct {
-	Channel string
-	DataLen uint32
+	ChannelName string
+	DataLen     uint32
+	Data        []byte
 }
 
 // ReadFrameHeader reads channel and data length from the provided reader. Does not read the actual data.
@@ -54,7 +71,7 @@ func ReadFrameHeader(r io.Reader, maxChannelLen uint8, maxDataLen uint32) (Frame
 
 	// Return frame
 	return Frame{
-		Channel: string(chBytes),
-		DataLen: dataLen,
+		ChannelName: string(chBytes),
+		DataLen:     dataLen,
 	}, br, nil
 }
