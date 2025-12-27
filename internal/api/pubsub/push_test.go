@@ -25,7 +25,7 @@ func buildFrameData(channel string, data []byte) *bytes.Buffer {
 func TestHandlePush(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	queue := NewQueue()
+	queue := NewQueue[[]byte]()
 	handler := NewPushHandler(queue)
 
 	r := gin.New()
@@ -63,7 +63,7 @@ func TestHandlePush(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queue = NewQueue() // Reset queue for each test
+			queue = NewQueue[[]byte]() // Reset queue for each test
 			handler.Queue = queue
 
 			w := httptest.NewRecorder()
@@ -99,7 +99,7 @@ func TestHandlePush(t *testing.T) {
 func TestHandlePush_InvalidFrames(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	queue := NewQueue()
+	queue := NewQueue[[]byte]()
 	handler := NewPushHandler(queue)
 
 	r := gin.New()
@@ -140,7 +140,7 @@ func TestHandlePush_InvalidFrames(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			queue = NewQueue() // Reset queue
+			queue = NewQueue[[]byte]() // Reset queue
 			handler.Queue = queue
 
 			w := httptest.NewRecorder()
@@ -162,7 +162,7 @@ func TestHandlePush_InvalidFrames(t *testing.T) {
 func TestHandlePush_MaxBodySize(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
-	queue := NewQueue()
+	queue := NewQueue[[]byte]()
 	handler := NewPushHandler(queue)
 
 	r := gin.New()

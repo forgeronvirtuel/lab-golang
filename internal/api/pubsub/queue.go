@@ -1,22 +1,22 @@
 package pubsub
 
-type node struct {
-	value []byte
-	next  *node
+type node[T any] struct {
+	value T
+	next  *node[T]
 }
 
-type Queue struct {
-	head *node
-	tail *node
+type Queue[T any] struct {
+	head *node[T]
+	tail *node[T]
 	size int
 }
 
-func NewQueue() *Queue {
-	return &Queue{}
+func NewQueue[T any]() *Queue[T] {
+	return &Queue[T]{}
 }
 
-func (q *Queue) Enqueue(value []byte) {
-	newNode := &node{value: value}
+func (q *Queue[T]) Enqueue(value T) {
+	newNode := &node[T]{value: value}
 	if q.tail != nil {
 		q.tail.next = newNode
 	} else {
@@ -26,9 +26,10 @@ func (q *Queue) Enqueue(value []byte) {
 	q.size++
 }
 
-func (q *Queue) Dequeue() ([]byte, bool) {
+func (q *Queue[T]) Dequeue() (T, bool) {
 	if q.head == nil {
-		return nil, false
+		var zero T
+		return zero, false
 	}
 	value := q.head.value
 	q.head = q.head.next
@@ -39,10 +40,10 @@ func (q *Queue) Dequeue() ([]byte, bool) {
 	return value, true
 }
 
-func (q *Queue) Size() int {
+func (q *Queue[T]) Size() int {
 	return q.size
 }
 
-func (q *Queue) IsEmpty() bool {
+func (q *Queue[T]) IsEmpty() bool {
 	return q.size == 0
 }

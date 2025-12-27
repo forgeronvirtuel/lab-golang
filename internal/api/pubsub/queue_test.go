@@ -3,7 +3,7 @@ package pubsub
 import "testing"
 
 func TestNewQueue(t *testing.T) {
-	q := NewQueue()
+	q := NewQueue[[]byte]()
 	if q == nil {
 		t.Fatal("expected new queue, got nil")
 	}
@@ -16,7 +16,7 @@ func TestNewQueue(t *testing.T) {
 }
 
 func TestEnqueue(t *testing.T) {
-	q := NewQueue()
+	q := NewQueue[[]byte]()
 	q.Enqueue([]byte("first"))
 	if q.IsEmpty() {
 		t.Errorf("expected non-empty queue after enqueue")
@@ -32,7 +32,7 @@ func TestEnqueue(t *testing.T) {
 }
 
 func TestDequeue(t *testing.T) {
-	q := NewQueue()
+	q := NewQueue[[]byte]()
 	q.Enqueue([]byte("first"))
 	q.Enqueue([]byte("second"))
 
@@ -65,7 +65,7 @@ func TestDequeue(t *testing.T) {
 }
 
 func TestIsEmpty(t *testing.T) {
-	q := NewQueue()
+	q := NewQueue[[]byte]()
 	if !q.IsEmpty() {
 		t.Errorf("expected new queue to be empty")
 	}
@@ -82,7 +82,7 @@ func TestIsEmpty(t *testing.T) {
 }
 
 func TestSize(t *testing.T) {
-	q := NewQueue()
+	q := NewQueue[[]byte]()
 	if q.Size() != 0 {
 		t.Errorf("expected size 0 for new queue, got %d", q.Size())
 	}

@@ -8,10 +8,10 @@ import (
 )
 
 type PushHandler struct {
-	Queue *Queue
+	Queue *Queue[[]byte]
 }
 
-func NewPushHandler(q *Queue) *PushHandler {
+func NewPushHandler(q *Queue[[]byte]) *PushHandler {
 	return &PushHandler{Queue: q}
 }
 
